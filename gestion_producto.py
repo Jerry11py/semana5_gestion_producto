@@ -4,8 +4,20 @@ productos = []
 def añadir_producto():
     # Lógica para añadir un producto
     nombre = input('Introduzca el nombre del producto: ')
-    precio = float(input('Introduzca el precio del producto: '))
-    cantidad = int(input('Introduzca la cantidad del producto: '))
+    
+    while True:
+        try:
+            precio = float(input('Introduzca el precio del producto: '))
+            break
+        except ValueError:
+            print("Error: El precio debe ser un número.")
+
+    while True:
+        try:
+            cantidad = int(input('Introduzca la cantidad del producto: '))
+            break
+        except ValueError:
+            print("Error: La cantidad debe ser un número entero.")
 
     producto = {
         'nombre': nombre,
@@ -23,8 +35,8 @@ def ver_productos():
     
     print("Lista de productos")
     for producto in productos:
-        precio = int(producto['precio']) if producto['precio'].is_integer() else producto['precio']
-        print(f"Nombre: {producto['nombre']}, Precio: {precio}, Cantidad: {producto['cantidad']}")
+            precio = int(producto['precio']) if producto['precio'].is_integer() else producto['precio']
+            print(f"Nombre: {producto['nombre']}, Precio: {precio}, Cantidad: {producto['cantidad']}")
         
 def actualizar_producto():
     # Lógica para actualizar un producto
@@ -37,11 +49,19 @@ def actualizar_producto():
             
             nuevo_precio = input("Introduzca el nuevo precio del producto (No poner nada para no cambiar el precio): ")
             if nuevo_precio:
-                producto['precio'] = float(nuevo_precio)
+                try:
+                    producto['precio'] = float(nuevo_precio)
+                except ValueError:
+                    print("Error: El precio debe ser un número.")
+                    return
             
-            nueva_cantidad = input("Introduzca la nueva cantidad del producto (No poner nada para no cambiar la cantidad: ")
+            nueva_cantidad = input("Introduzca la nueva cantidad del producto (No poner nada para no cambiar la cantidad): ")
             if nueva_cantidad:
-                producto['cantidad'] = int(nueva_cantidad)
+                try:
+                    producto['cantidad'] = int(nueva_cantidad)
+                except ValueError:
+                    print("Error: La cantidad debe ser un número entero.")
+                    return
             
             print(f"Producto '{nombre}' actualizado correctamente.")
             return
@@ -71,19 +91,23 @@ def cargar_datos():
     try:
         with open('productos.txt','r') as file:
             for linea in file:
-                nombre, precio, cantidad = linea.strip().split('|')
-                producto = {
-                    'nombre': nombre,
-                    'precio': float(precio),
-                    'cantidad': int(cantidad)
-                }
-                productos.append(producto)
+                try:
+                    nombre, precio, cantidad = linea.strip().split('|')
+                    producto = {
+                        'nombre': nombre,
+                        'precio': float(precio),
+                        'cantidad': int(cantidad)
+                    }
+                    productos.append(producto)
+                except ValueError:
+                    print(f"Error en la linea: {linea.strip()}")
         print("Datos cargados exitosamente")
     except FileNotFoundError:
         print("No se encontró el archivo 'productos.txt'.")
 
 
 def menu():
+    cargar_datos()  # cargar la lista de productos.txt al iniciar el programa
     while True:
         print("1: Añadir producto")
         print("2: Ver productos")
